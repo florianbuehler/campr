@@ -1,7 +1,9 @@
 ﻿const mongoose = require('mongoose')
 const cities = require('./cities')
 const { places, descriptors } = require('./seedHelpers')
+const User = require('../models/user')
 const Campground = require('../models/campground')
+const Review = require('../models/review')
 
 mongoose.connect('mongodb://localhost:27017/camprDb', {
   useNewUrlParser: true,
@@ -18,13 +20,19 @@ db.once('open', () => {
 const sample = (array) => array[Math.floor(Math.random() * array.length)]
 
 const seedDB = async () => {
+  await User.deleteMany({})
+  await Review.deleteMany({})
   await Campground.deleteMany({})
+
+  const user = new User({ username: 'testuser', email: 'testuser@test.invalid' })
+  const registeredUser = await User.register(user, 'password')
 
   for (let i = 0; i < 50; i++) {
     const random1000 = Math.floor(Math.random() * 1000)
     const price = Math.floor(Math.random() * 20) + 10
 
     const camp = new Campground({
+      author: registeredUser._id,
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
       image: 'https://source.unsplash.com/collection/483251',
