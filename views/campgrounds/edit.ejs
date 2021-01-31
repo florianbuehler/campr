@@ -2,7 +2,7 @@
 <div class="row">
     <h1 class="text-center">Edit Campground</h1>
     <div class="col-6 offset-3">
-        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" novalidate class="validated-form">
+        <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" id="title" name="campground[title]" class="form-control" value="<%= campground.title %>" required>
@@ -18,11 +18,8 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="image" class="form-label">Image Url</label>
-                <input type="text" id="image" name="campground[image]" class="form-control" value="<%= campground.image %>" required>
-                <div class="valid-feedback">
-                    Looks good!
-                </div>
+                <label class="form-label" for="inputGroupFile02">Choose image(s)</label>
+                <input type="file" class="form-control" id="inputGroupFile02" name="image" multiple>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Campground Price</label>
@@ -40,6 +37,15 @@
                 <div class="valid-feedback">
                     Looks good!
                 </div>
+            </div>
+            <div class="mb-3">
+                <% campground.images.forEach(function(img, i) { %>
+                <img src="<%= img.thumbnail %>" class="img-thumbnail">
+                <div class="form-check-inline">
+                    <input type="checkbox" name="deleteImages[]" id="image-<%= i %>" value="<%= img.filename %>" >
+                </div>
+                <label for="image-<%= i %>">Delete?</label>
+                <% }) %>
             </div>
             <div class="mb-3">
                 <button class="btn btn-info">Update Campground</button>
