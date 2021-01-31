@@ -3,7 +3,6 @@
 
 <div class="row">
     <div class="col-6">
-        <div id='map' style='width: 400px; height: 300px;'></div>
         <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <% campground.images.forEach((img, i) => { %>
@@ -57,8 +56,14 @@
         </div>
     </div>
     <div class="col-5 offset-1">
-        <% if (currentUser) { %>
+        <div id="map" class="mb-5"></div>
         <h2>Leave a Review</h2>
+        <% if (!currentUser) { %>
+        <p>
+            You must be logged in to leave a review!
+        </p>
+        <a href="/login" class="btn btn-secondary">Login</a>
+        <% } else { %>
         <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
             <fieldset class="starability-basic">
                 <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
