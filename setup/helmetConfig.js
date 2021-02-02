@@ -19,7 +19,7 @@ const connectSrcUrls = ['https://api.mapbox.com', 'https://*.tiles.mapbox.com', 
 
 const fontSrcUrls = []
 
-module.exports.helmetConfig = {
+module.exports = {
   directives: {
     defaultSrc: [],
     connectSrc: ["'self'", ...connectSrcUrls],
