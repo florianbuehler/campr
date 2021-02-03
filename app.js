@@ -6,7 +6,7 @@ const express = require('express')
 const session = require('express-session')
 const flash = require('connect-flash')
 const path = require('path')
-const mongoose = require('mongoose')
+const connectDb = require('./setup/connectDb')
 const mongoSanitize = require('express-mongo-sanitize')
 const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override')
@@ -24,18 +24,8 @@ const campgroundRoutes = require('./routes/campgrounds')
 const reviewRoutes = require('./routes/reviews')
 const noMatchRoute = require('./routes/404')
 
-mongoose.connect(process.env.DB_URL, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false
-})
-
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', () => {
-  console.log('Database connected')
-})
+// setup DB connection
+connectDb()
 
 const app = express()
 
