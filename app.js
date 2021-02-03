@@ -6,32 +6,26 @@ const express = require('express')
 const session = require('express-session')
 const flash = require('connect-flash')
 const path = require('path')
-const mongoose = require('mongoose')
+const connectDb = require('./setup/connectDb')
 const mongoSanitize = require('express-mongo-sanitize')
 const ejsMate = require('ejs-mate')
-const ExpressError = require('./utils/ExpressError')
 const methodOverride = require('method-override')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const helmet = require('helmet')
-const { helmetConfig } = require('./helmetConfig')
+const helmetConfig = require('./setup/helmetConfig')
+const { configureSessionStore, sessionConfig } = require('./setup/sessionConfig')
 const User = require('./models/user')
+
+// routes
+const homeRoute = require('./routes/home')
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds')
 const reviewRoutes = require('./routes/reviews')
+const noMatchRoute = require('./routes/404')
 
-mongoose.connect('mongodb://localhost:27017/camprDb', {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false
-})
-
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', () => {
-  console.log('Database connected')
-})
+// setup DB connection
+connectDb()
 
 const app = express()
 
@@ -50,18 +44,7 @@ app.use(
 )
 
 // add and configure session
-const sessionConfig = {
-  name: 'session',
-  secret: 'thisshouldbeabettersecret',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    // secure: true,
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7
-  }
-}
+configureSessionStore()
 app.use(session(sessionConfig))
 
 // add flash
@@ -89,17 +72,11 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')))
 
 // add routes
+app.use('/', homeRoute)
 app.use('/', userRoutes)
 app.use('/campgrounds', campgroundRoutes)
 app.use('/campgrounds/:id/reviews', reviewRoutes)
-
-app.get('/', (req, res) => {
-  res.render('home')
-})
-
-app.all('*', (req, res, next) => {
-  next(new ExpressError('Page Not Found', 404))
-})
+app.use('/', noMatchRoute)
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err
