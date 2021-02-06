@@ -27,6 +27,7 @@ const noMatchRoute = require('./routes/404')
 // setup DB connection
 connectDb()
 
+// create app
 const app = express()
 
 app.engine('ejs', ejsMate)
