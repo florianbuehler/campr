@@ -1,6 +1,9 @@
 # campr
 
-A small platform allowing users to add and rate campgrounds. The campgrounds then are displayed in a cluster map.
+A small platform allowing (authenticated) users to create, share and review campgrounds - you can think of it as Yelp for campgrounds. 
+
+A user can create an account and then create, adapt and delete his own campground(s). He can add the location, a description and several images to his campground(s).
+All authenticated users can review and rate the campgrounds and a great overview over all existing campgrounds is provided through a cluster map.
 
 
 ## Technology
